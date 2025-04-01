@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Expert Submission"
 include(":app")
- 
+include(":core")
+include(":favourite")

@@ -1,29 +1,20 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.dynamic.feature)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
-
 android {
-    namespace = "com.al.expertsubmission"
+    namespace = "com.al.favourite"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.al.expertsubmission"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
     compileOptions {
@@ -33,9 +24,12 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    dynamicFeatures += setOf(":favourite")
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":app"))
 }
