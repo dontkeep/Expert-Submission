@@ -1,4 +1,7 @@
 package com.al.expertsubmission.detail
 
-class DetailViewModel {
+import androidx.lifecycle.ViewModel
+import com.al.core.domain.usecase.MovieUseCase
+
+class DetailViewModel(val movieUseCase: MovieUseCase): ViewModel() {
 }
