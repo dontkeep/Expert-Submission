@@ -9,7 +9,6 @@ import kotlin.coroutines.EmptyCoroutineContext.get
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-
 val useCaseModule = module {
     factory<MovieUseCase> { MovieInteractor(get()) }
 }

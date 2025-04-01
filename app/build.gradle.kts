@@ -34,9 +34,15 @@ android {
         jvmTarget = "11"
     }
     dynamicFeatures += setOf(":favourite")
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
 }
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(kotlin("test"))
 }

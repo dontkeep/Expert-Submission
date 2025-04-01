@@ -1,5 +1,6 @@
 package com.al.core.di
 
+import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.al.core.data.MovieRepository
@@ -11,6 +12,7 @@ import com.al.core.domain.repository.IMovieRepository
 import com.al.core.utils.AppExecutors
 import com.al.core.utils.AuthInterceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,20 +34,17 @@ val networkModule = module {
     single {
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
     }
 
     single {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/3/")
-            .client(get())
             .addConverterFactory(GsonConverterFactory.create())
+            .client(get())
             .build()
         retrofit.create(ApiService::class.java)
-    }
-
-    single {
-        get<Retrofit>().create(ApiService::class.java)
     }
 }
 
