@@ -7,7 +7,6 @@ import com.al.core.data.source.local.room.MovieDatabase
 import com.al.core.data.source.remote.RemoteDataSource
 import com.al.core.data.source.remote.network.ApiService
 import com.al.core.domain.repository.IMovieRepository
-import com.al.core.utils.AppExecutors
 import com.al.core.utils.AuthInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -49,10 +48,8 @@ val networkModule = module {
 val repositoryModules = module {
     single { LocalDataSource(get()) }
     single { RemoteDataSource(get()) }
-    factory { AppExecutors() }
     single<IMovieRepository> {
         MovieRepository(
-            get(),
             get(),
             get()
         )

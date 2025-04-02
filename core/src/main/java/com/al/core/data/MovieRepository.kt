@@ -6,12 +6,13 @@ import com.al.core.data.source.remote.network.ApiResponseResult
 import com.al.core.data.source.remote.response.MovieResponse
 import com.al.core.domain.model.Movies
 import com.al.core.domain.repository.IMovieRepository
-import com.al.core.utils.AppExecutors
 import com.al.core.utils.DataMapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
-class MovieRepository(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource, private val appExecutors: AppExecutors): IMovieRepository {
+class MovieRepository(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource): IMovieRepository {
     override fun getMovies(): Flow<Resource<List<Movies>>> {
         return object: NetworkBoundResources<List<Movies>>() {
             override fun loadFromDB(): Flow<List<Movies>> {
@@ -41,11 +42,13 @@ class MovieRepository(private val remoteDataSource: RemoteDataSource, private va
         }
     }
 
-    override fun setFavouriteMovies(
+    override suspend fun setFavouriteMovies(
         movies: Movies,
         state: Boolean
     ) {
         val moviesEntity = DataMapper.mapDomainToEntity(movies)
-        appExecutors.diskIO().execute { localDataSource.setFavoriteMovies(moviesEntity, state) }
+        withContext(Dispatchers.IO) {
+            localDataSource.setFavoriteMovies(moviesEntity, state)
+        }
     }
 }
