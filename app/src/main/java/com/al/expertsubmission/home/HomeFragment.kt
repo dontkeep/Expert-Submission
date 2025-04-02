@@ -50,11 +50,14 @@ class HomeFragment : Fragment() {
                     }
                     is com.al.core.data.Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
-//                        binding.tvError.visibility = View.VISIBLE
-//                        binding.tvError.text = movies.message ?: getString(R.string.something_wrong)
                     }
                 }
             }
+        }
+
+        binding.fabFavourite.setOnClickListener {
+            val intent = Intent(requireContext(), Class.forName("com.al.favourite.FavouriteActivity"))
+            startActivity(intent)
         }
 
         with(binding.rvMovies) {
@@ -62,5 +65,10 @@ class HomeFragment : Fragment() {
             setHasFixedSize(true)
             adapter = movieAdapter
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

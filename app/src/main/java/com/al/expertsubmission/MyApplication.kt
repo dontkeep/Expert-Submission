@@ -1,6 +1,8 @@
 package com.al.expertsubmission
 
 import android.app.Application
+import android.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatDelegate
 import com.al.core.di.databaseModule
 import com.al.core.di.networkModule
 import com.al.core.di.repositoryModules
@@ -24,6 +26,15 @@ class MyApplication : Application(){
                 useCaseModule,
                 viewModelModule
             ))
+        }
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPreferences.getBoolean("theme", false)
+
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 }

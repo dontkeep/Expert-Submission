@@ -1,7 +1,6 @@
 package com.al.core.utils
 
 import com.al.core.data.source.local.entity.MovieEntity
-import com.al.core.data.source.remote.response.MovieDetailResponse
 import com.al.core.data.source.remote.response.MovieResponse
 import com.al.core.domain.model.Movies
 
@@ -61,24 +60,6 @@ object DataMapper {
             adult = input.adult,
             voteCount = input.voteCount,
             isFavorite = input.isFavorite
-        )
-    }
-
-    fun mapResponseToDomain(input: MovieDetailResponse): Movies {
-        return Movies(
-            id = input.id ?: 0,
-            title = input.title.orEmpty(),
-            overview = input.overview,
-            originalLanguage = input.originalLanguage,
-            originalTitle = input.originalTitle,
-            posterPath = input.posterPath,
-            backdropPath = input.backdropPath,
-            releaseDate = input.releaseDate,
-            popularity = input.popularity as? Double ?: 0.0,
-            voteAverage = input.voteAverage as? Double ?: 0.0,
-            adult = input.adult,
-            voteCount = input.voteCount,
-            isFavorite = false
         )
     }
 }
