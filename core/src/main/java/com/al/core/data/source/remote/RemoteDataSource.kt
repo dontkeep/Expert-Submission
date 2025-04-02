@@ -1,8 +1,6 @@
 package com.al.core.data.source.remote
 
 import android.util.Log
-import co.touchlab.stately.concurrency.synchronize
-import com.al.core.data.source.local.room.MovieDao
 import com.al.core.data.source.remote.network.ApiResponseResult
 import com.al.core.data.source.remote.network.ApiService
 import com.al.core.data.source.remote.response.MovieResponse

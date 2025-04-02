@@ -1,6 +1,5 @@
 package com.al.core.utils
 
-import android.util.Log
 import com.al.core.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response

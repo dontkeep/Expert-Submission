@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 class MovieRepository(private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource, private val appExecutors: AppExecutors): IMovieRepository {
     override fun getMovies(): Flow<Resource<List<Movies>>> {
-        return object: NetworkBoundResources<List<Movies>, List<MovieResponse>>() {
+        return object: NetworkBoundResources<List<Movies>>() {
             override fun loadFromDB(): Flow<List<Movies>> {
                 return localDataSource.getAllMovies().map {
                     DataMapper.mapEntitiesToDomain(it)

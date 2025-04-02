@@ -26,7 +26,6 @@ class MovieAdapter: ListAdapter<Movies, MovieAdapter.MovieViewHolder>(DIFF_CALLB
         fun bind(movie: Movies) {
             with(binding) {
                 tvItemTitle.text = movie.title
-                tvItemDate.text = movie.releaseDate
                 tvItemRating.text = movie.voteAverage?.toString() ?: "N/A"
                 tvItemOverview.text = buildString {
                     append(movie.overview?.take(100))

@@ -1,8 +1,6 @@
 package com.al.core.di
 
-import android.util.Log
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.al.core.data.MovieRepository
 import com.al.core.data.source.local.LocalDataSource
 import com.al.core.data.source.local.room.MovieDatabase
