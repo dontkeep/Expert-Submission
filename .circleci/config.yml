@@ -8,7 +8,14 @@ jobs:
     executor: android/android
     steps:
       - checkout
-      
+
+      - run:
+          name: Fix Google Cloud SDK GPG Key Issue
+          command: |
+            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0BA5CE6DC6315A3 || \
+            sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C0BA5CE6DC6315A3 || \
+            echo "Failed to add Google Cloud SDK GPG key"
+
       - run:
           name: Add OpenJDK 17 Repository
           command: |
