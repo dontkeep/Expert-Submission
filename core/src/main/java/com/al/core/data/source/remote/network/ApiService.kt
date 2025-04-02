@@ -10,5 +10,5 @@ interface ApiService {
     suspend fun getMovies(): MovieListResponse
 
     @GET("movie/:id")
-    fun getMovieDetail(id: String): MovieDetailResponse
+    fun getMovieDetail(id: Int): MovieDetailResponse
 }

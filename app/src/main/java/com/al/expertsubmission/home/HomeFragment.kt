@@ -1,5 +1,6 @@
 package com.al.expertsubmission.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.al.core.ui.MovieAdapter
 import com.al.expertsubmission.databinding.FragmentHomeBinding
+import com.al.expertsubmission.detail.DetailActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
@@ -29,6 +31,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val movieAdapter = MovieAdapter()
+
+        movieAdapter.onItemClicked = { selectedData ->
+            val intent = Intent(activity, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.EXTRA_DATA, selectedData)
+            startActivity(intent)
+        }
+
         viewModel.movies.observe(viewLifecycleOwner) { movies ->
             if (movies != null) {
                 when(movies) {

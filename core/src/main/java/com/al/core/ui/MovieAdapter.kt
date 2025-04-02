@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide
 
 class MovieAdapter: ListAdapter<Movies, MovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
 
+    var onItemClicked: ((Movies) -> Unit) ?= null
+
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
@@ -26,13 +28,22 @@ class MovieAdapter: ListAdapter<Movies, MovieAdapter.MovieViewHolder>(DIFF_CALLB
                 tvItemTitle.text = movie.title
                 tvItemDate.text = movie.releaseDate
                 tvItemRating.text = movie.voteAverage?.toString() ?: "N/A"
-                tvItemOverview.text = movie.overview
+                tvItemOverview.text = buildString {
+                    append(movie.overview?.take(100))
+                    append("...")
+                }
 
                 Glide.with(itemView.context)
                     .load("https://image.tmdb.org/t/p/w500" + movie.posterPath)
                     .placeholder(R.drawable.movie_placeholder)
                     .error(R.drawable.movie_placeholder)
                     .into(ivItemPoster)
+            }
+        }
+
+        init {
+            itemView.setOnClickListener {
+                onItemClicked?.invoke(getItem(bindingAdapterPosition))
             }
         }
     }

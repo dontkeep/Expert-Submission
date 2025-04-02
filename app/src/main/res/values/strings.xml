@@ -8,4 +8,7 @@
     <string name="favourite">Favourite</string>
     <string name="movies">Movies</string>
     <string name="list_of_movies">List of Movies</string>
+    <string name="add_favorite_button">Add Favorite Button</string>
+    <string name="movie_poster">Movie Poster</string>
+    <string name="movie_detail">Movie Detail</string>
 </resources>

@@ -41,6 +41,19 @@ class MovieRepository(private val remoteDataSource: RemoteDataSource, private va
         }
     }
 
+    override fun getDetailMovie(movieId: Int): Flow<Resource<Movies>> {
+        return remoteDataSource.getDetailMovie(movieId).map {
+            when (it) {
+                is ApiResponseResult.Success -> {
+                    val movie = it.data?.let { it1 -> DataMapper.mapResponseToDomain(it1) }
+                    Resource.Success(movie as Movies)
+                }
+                is ApiResponseResult.Empty -> Resource.Error("Empty")
+                is ApiResponseResult.Error -> Resource.Error(it.errorMessage)
+            }
+        }
+    }
+
     override fun setFavouriteMovies(
         movies: Movies,
         state: Boolean
