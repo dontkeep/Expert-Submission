@@ -1,68 +1,34 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@0.2.1
-
-jobs:
+  android: circleci/android@2.1.0:
   build:
-    executor: android/android
+    machine:
+      image: ubuntu-2204:current
+      resource_class: arm.medium 
+      environment:
+        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-arm64
     steps:
       - checkout
-
-      - run:
-          name: Fix Google Cloud SDK GPG Key Issue
-          command: |
-            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0BA5CE6DC6315A3 || \
-            sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C0BA5CE6DC6315A3 || \
-            echo "Failed to add Google Cloud SDK GPG key"
-
-      - run:
-          name: Add OpenJDK 17 Repository
-          command: |
-            sudo apt update
-            sudo apt install -y software-properties-common
-            sudo add-apt-repository -y ppa:openjdk-r/ppa
-            sudo apt update
-
-      - run:
-          name: Install OpenJDK 17
-          command: |
-            sudo apt install -y openjdk-17-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-            java -version
-
+      - android/accept-licenses
+      - android/setup-sdk
       - restore_cache:
-          key: android-orb-v1-
-
+          key: android-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Chmod permissions
-          command: sudo chmod +x ./gradlew
-
+          name: Set Java Version
+          command: |
+            sudo apt-get update && sudo apt-get install -y openjdk-17-jdk
+            echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64' >> $BASH_ENV
       - run:
-          name: Download Dependencies
-          command: ./gradlew androidDependencies
-
-      - save_cache:
-          key: 'android-orb-v1-{{ epoch }}'
-          paths:
-            - ~/.android/build-cache
-            - ~/.android/cache
-
-      - run:
-          name: Run Build
+          name: Build with Gradle
           command: ./gradlew build
-
-      - store_artifacts: 
+      - save_cache:
+          paths:
+            - ~/.gradle
+            - ~/.android
+          key: android-gradle-cache-{{ checksum "build.gradle" }}
+      - store_artifacts:
           path: app/build/reports
           destination: reports
-
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
-
       - store_test_results:
           path: app/build/test-results
-
-      - store_artifacts:  
-          path: app/build/outputs/apk/debug/
-          destination: artifact-file
