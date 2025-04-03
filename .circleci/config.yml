@@ -14,18 +14,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Fix ca-certificates-java issue
+          name: Fix Java Certificate Issue
           command: |
-            sudo apt update
-            sudo apt install --reinstall ca-certificates-java -y
+            sudo rm -rf /etc/ssl/certs/java/cacerts
+            sudo apt-get remove --purge --auto-remove ca-certificates-java -y
+            sudo apt-get install --reinstall ca-certificates -y
             sudo update-ca-certificates -f
       - run:
-          name: Install OpenJDK 17
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-17-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
-            java -version
+         name: Install OpenJDK 17
+         command: |
+           sudo apt-get update
+           sudo apt-get install -y openjdk-17-jdk
+           sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+           java -version
       - restore_cache:
           key: android-orb-v1-
       - run:
