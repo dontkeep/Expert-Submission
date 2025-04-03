@@ -1,8 +1,8 @@
 version: 2.1
- 
+
 orbs:
   android: circleci/android@0.2.1
-  
+
 executors:
   java17:
     docker:
@@ -12,10 +12,12 @@ jobs:
   build:
     executor: java17
     steps:
-      - run:
-          name: Install SSH
-          command: sudo apt-get update && sudo apt-get install -y openssh-client
       - checkout
+      - android/setup  # Install Android SDK and set ANDROID_HOME
+      - run:
+          name: Accept Android Licenses
+          command: |
+            yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
       - run:
           name: Clone Repository (HTTPS Alternative)
           command: |
@@ -30,17 +32,10 @@ jobs:
             sudo apt-get install --reinstall ca-certificates -y
             sudo update-ca-certificates -f
       - run:
-         name: Install OpenJDK 17
-         command: |
-           sudo apt-get update
-           sudo apt-get install -y openjdk-17-jdk
-           sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-           java -version
-      - restore_cache:
-          key: android-orb-v1-
-      - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
+      - restore_cache:
+          key: android-orb-v1-
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
