@@ -3,9 +3,10 @@ version: 2.1
 executors:
   android-env:
     docker:
-      - image: cimg/android:2024.01.1  # Official Android image with SDK + JDK 17
+      - image: cimg/android:2024.03.1
     environment:
-      _JAVA_OPTIONS: "-Xmx2048m"  # Increase Java memory
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UseContainerSupport"
 
 jobs:
   build:
@@ -13,38 +14,40 @@ jobs:
     steps:
       - checkout
 
-      # Accept Android licenses
+      # Fix SIGPIPE error during license acceptance
       - run:
-          name: Accept SDK Licenses
+          name: Accept Android Licenses
           command: |
-            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+            (yes || true) | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-      # Install required SDK components
+      # Install required Android components
       - run:
-          name: Install Android Tools
+          name: Install Android SDK Components
           command: |
-            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+              "platforms;android-34" \
+              "build-tools;34.0.0" \
+              "platform-tools" \
+              "emulator"
 
-      # Cache Gradle dependencies
+      # Cache optimization
       - restore_cache:
           keys:
-            - gradle-v7-{{ checksum "build.gradle" }}
-            - gradle-v7-
+            - android-v4-{{ checksum "build.gradle" }}
+            - android-v4-
 
-      # Build project
       - run:
-          name: Build with Gradle
-          command: ./gradlew build
+          name: Build Project
+          command: ./gradlew build --stacktrace
 
-      # Save cache
       - save_cache:
           paths:
-            - ~/.gradle
-            - ~/.android
-          key: gradle-v7-{{ checksum "build.gradle" }}
+            - ~/.gradle/caches
+            - ~/.android/cache
+          key: android-v4-{{ checksum "build.gradle" }}
 
-      # Store artifacts
       - store_artifacts:
-          path: app/build/outputs/apk/debug
+          path: app/build/outputs
+
       - store_test_results:
           path: app/build/test-results
