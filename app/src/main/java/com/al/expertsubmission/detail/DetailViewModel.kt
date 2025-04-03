@@ -10,7 +10,7 @@ class DetailViewModel(val movieUseCase: MovieUseCase): ViewModel() {
     private val _favoriteState = MutableLiveData<Boolean>()
     val favoriteState: LiveData<Boolean> = _favoriteState
 
-    fun toggleFavorite(movie: Movies) {
+    suspend fun toggleFavorite(movie: Movies) {
         val newStatus = !(_favoriteState.value ?: movie.isFavorite)
         movieUseCase.setFavouriteMovies(movie, newStatus)
         _favoriteState.postValue(newStatus)
