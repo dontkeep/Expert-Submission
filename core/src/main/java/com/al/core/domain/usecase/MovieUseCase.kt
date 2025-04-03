@@ -9,5 +9,5 @@ interface MovieUseCase {
 
     fun getFavouriteMovies(): Flow<List<Movies>>
 
-    fun setFavouriteMovies(movies: Movies, state: Boolean)
+    suspend fun setFavouriteMovies(movies: Movies, state: Boolean)
 }

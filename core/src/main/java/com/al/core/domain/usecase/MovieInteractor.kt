@@ -14,7 +14,7 @@ class MovieInteractor(private val moviesRepository: IMovieRepository): MovieUseC
         return moviesRepository.getFavouriteMovies()
     }
 
-    override fun setFavouriteMovies(
+    override suspend fun setFavouriteMovies(
         movies: Movies,
         state: Boolean
     ) {
