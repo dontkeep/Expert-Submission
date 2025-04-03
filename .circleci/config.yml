@@ -1,8 +1,5 @@
 version: 2.1
- 
-orbs:
-  android: circleci/android@0.2.1
-  
+
 executors:
   android-env:
     docker:
@@ -15,12 +12,16 @@ executors:
       ANDROID_SDK_ROOT: /home/circleci/android-sdk
       ANDROID_NDK_HOME: /home/circleci/android-ndk
 
-
 jobs:
   build:
     executor: android-env
     steps:
       - checkout
+
+      # 🔍 Debug: Check if project files exist
+      - run:
+          name: Debug File System
+          command: ls -la
 
       # ✅ Ensure ANDROID_HOME exists
       - run:
@@ -46,10 +47,10 @@ jobs:
           name: Set Android SDK Path
           command: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      # ✅ Verify SDK Installation
+      # ✅ Fix Gradle Wrapper Permissions
       - run:
-          name: Debug SDK Installation
-          command: ls -la $ANDROID_HOME
+          name: Fix Gradle Permissions
+          command: chmod +x ./gradlew
 
       - restore_cache:
           keys:
@@ -71,4 +72,3 @@ jobs:
 
       - store_test_results:
           path: app/build/test-results
-
