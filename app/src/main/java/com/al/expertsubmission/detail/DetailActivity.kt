@@ -3,14 +3,15 @@ package com.al.expertsubmission.detail
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.al.core.domain.model.Movies
 import com.al.expertsubmission.R
 import com.al.expertsubmission.databinding.ActivityDetailBinding
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailActivity : AppCompatActivity() {
@@ -51,7 +52,9 @@ class DetailActivity : AppCompatActivity() {
 
         binding.fabFavorite.setOnClickListener {
             movie?.let {
-                viewModel.toggleFavorite(it)
+                lifecycleScope.launch {
+                    viewModel.toggleFavorite(it)
+                }
             }
         }
 
