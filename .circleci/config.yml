@@ -4,9 +4,17 @@ orbs:
   android: circleci/android@0.2.1
   
 executors:
-  java17:
+  android-env:
     docker:
-      - image: 'cimg/openjdk:17.0'
+      - image: cimg/android:2023.03
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+      _JAVA_OPTIONS: "-Xmx2048m"
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+      ANDROID_HOME: /opt/android-sdk
+      ANDROID_SDK_ROOT: /opt/android-sdk
+      ANDROID_NDK_HOME: /opt/android-ndk
+
 
 jobs:
   build:
