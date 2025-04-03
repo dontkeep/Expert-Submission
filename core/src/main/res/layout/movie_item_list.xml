@@ -42,6 +42,7 @@
             app:layout_constraintStart_toEndOf="@id/cardPoster"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:paddingEnd="8dp"
             android:paddingStart="8dp"/>
 
         <TextView
@@ -52,7 +53,9 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tvItemTitle"
             app:layout_constraintTop_toBottomOf="@id/tvItemTitle"
-            android:paddingTop="4dp"/>
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"/>
 
         <TextView
             android:id="@+id/tvItemOverview"
@@ -64,7 +67,9 @@
             app:layout_constraintStart_toStartOf="@id/tvItemTitle"
             app:layout_constraintTop_toBottomOf="@id/tvItemRating"
             app:layout_constraintEnd_toEndOf="parent"
-            android:paddingTop="4dp"/>
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
