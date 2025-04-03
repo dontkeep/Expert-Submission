@@ -3,10 +3,10 @@ version: 2.1
 executors:
   android-env:
     docker:
-      - image: cimg/android:2024.03.1
+      - image: cimg/android:2023.03  # Verified working tag
     environment:
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
-      _JAVA_OPTIONS: "-Xmx4096m -XX:+UseContainerSupport"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+      _JAVA_OPTIONS: "-Xmx2048m"
 
 jobs:
   build:
@@ -14,40 +14,37 @@ jobs:
     steps:
       - checkout
 
-      # Fix SIGPIPE error during license acceptance
+      # Accept licenses safely
       - run:
           name: Accept Android Licenses
           command: |
-            (yes || true) | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+            mkdir -p ~/.android
+            touch ~/.android/repositories.cfg
+            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-      # Install required Android components
+      # Install required components
       - run:
-          name: Install Android SDK Components
+          name: Install SDK Components
           command: |
             $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
               "platforms;android-34" \
-              "build-tools;34.0.0" \
-              "platform-tools" \
-              "emulator"
+              "build-tools;34.0.0"
 
-      # Cache optimization
+      # Build with cache
       - restore_cache:
           keys:
-            - android-v4-{{ checksum "build.gradle" }}
-            - android-v4-
-
+            - gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Build Project
-          command: ./gradlew build --stacktrace
-
+          command: ./gradlew assembleDebug --stacktrace
       - save_cache:
           paths:
-            - ~/.gradle/caches
-            - ~/.android/cache
-          key: android-v4-{{ checksum "build.gradle" }}
+            - ~/.gradle
+            - ~/.android
+          key: gradle-cache-{{ checksum "build.gradle" }}
 
+      # Store results
       - store_artifacts:
-          path: app/build/outputs
-
+          path: app/build/outputs/apk/debug
       - store_test_results:
           path: app/build/test-results
