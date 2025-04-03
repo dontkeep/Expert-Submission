@@ -14,6 +14,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Fix ca-certificates-java issue
+          command: |
+            sudo apt update
+            sudo apt install --reinstall ca-certificates-java -y
+            sudo update-ca-certificates -f
+      - run:
           name: Install OpenJDK 17
           command: |
             sudo apt-get update && sudo apt-get install openjdk-17-jdk
