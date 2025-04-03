@@ -1,22 +1,27 @@
 version: 2.1
-
+ 
 orbs:
   android: circleci/android@0.2.1
-
+  
 executors:
   java17:
     docker:
       - image: 'cimg/openjdk:17.0'
-    environment:
-      ANDROID_HOME: /home/circleci/android-sdk
-      ANDROID_SDK_ROOT: /home/circleci/android-sdk
-      PATH: /home/circleci/android-sdk/cmdline-tools/latest/bin:/home/circleci/android-sdk/platform-tools:$PATH
 
 jobs:
   build:
     executor: java17
     steps:
+      - run:
+          name: Install SSH
+          command: sudo apt-get update && sudo apt-get install -y openssh-client
       - checkout
+      - run:
+          name: Clone Repository (HTTPS Alternative)
+          command: |
+            if [ ! -d .git ]; then
+              git clone https://github.com/dontkeep/Expert-Submission.git .
+            fi
       - run:
           name: Fix Java Certificate Issue
           command: |
@@ -25,29 +30,14 @@ jobs:
             sudo apt-get install --reinstall ca-certificates -y
             sudo update-ca-certificates -f
       - run:
-          name: Install OpenJDK 17
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-            java -version
+         name: Install OpenJDK 17
+         command: |
+           sudo apt-get update
+           sudo apt-get install -y openjdk-17-jdk
+           sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+           java -version
       - restore_cache:
           key: android-orb-v1-
-      - run:
-          name: Install Android SDK
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y unzip
-            curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -o cmdline-tools.zip
-            mkdir -p $ANDROID_HOME/cmdline-tools
-            unzip -q cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
-            mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
-            rm cmdline-tools.zip
-            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-      - run:
-          name: Set up local.properties
-          command: echo "sdk.dir=$ANDROID_HOME" > local.properties
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
@@ -62,7 +52,7 @@ jobs:
       - run:
           name: Run Build
           command: ./gradlew build
-      - store_artifacts:
+      - store_artifacts: 
           path: app/build/reports
           destination: reports
       - run:
@@ -70,6 +60,6 @@ jobs:
           command: ./gradlew lint test
       - store_test_results:
           path: app/build/test-results
-      - store_artifacts:
+      - store_artifacts:  
           path: app/build/outputs/apk/debug/
           destination: artifact-file
