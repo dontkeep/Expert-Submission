@@ -1,47 +1,50 @@
 version: 2.1
 
-orbs:
-  android: circleci/android@1.0.2  # Updated orb version
-
 executors:
-  android-java17:
+  android-env:
     docker:
-      - image: cimg/android:2023.09.1  # Official Android image with JDK 17
+      - image: cimg/android:2024.01.1  # Official Android image with SDK + JDK 17
+    environment:
+      _JAVA_OPTIONS: "-Xmx2048m"  # Increase Java memory
 
 jobs:
   build:
-    executor: android-java17
+    executor: android-env
     steps:
       - checkout
-      
-      - android/install-sdk:
-          api-level: 34
-          build-tools-version: 34.0.0
-          components: "platforms;android-34,platform-tools"
-      
-      - run:
-          name: Accept Licenses
-          command: |
-            yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
+      # Accept Android licenses
+      - run:
+          name: Accept SDK Licenses
+          command: |
+            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      # Install required SDK components
+      - run:
+          name: Install Android Tools
+          command: |
+            $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      # Cache Gradle dependencies
       - restore_cache:
           keys:
-            - v3-dependencies-{{ checksum "build.gradle" }}
-            - v3-dependencies-
+            - gradle-v7-{{ checksum "build.gradle" }}
+            - gradle-v7-
 
+      # Build project
       - run:
-          name: Build Project
+          name: Build with Gradle
           command: ./gradlew build
 
+      # Save cache
       - save_cache:
           paths:
             - ~/.gradle
             - ~/.android
-          key: v3-dependencies-{{ checksum "build.gradle" }}
+          key: gradle-v7-{{ checksum "build.gradle" }}
 
+      # Store artifacts
       - store_artifacts:
           path: app/build/outputs/apk/debug
-          destination: apk
-
       - store_test_results:
           path: app/build/test-results
