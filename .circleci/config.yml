@@ -13,7 +13,7 @@ jobs:
     executor: java17
     steps:
       - checkout
-      - android/setup  # Install Android SDK and set ANDROID_HOME
+      - android/android 
       - run:
           name: Accept Android Licenses
           command: |
